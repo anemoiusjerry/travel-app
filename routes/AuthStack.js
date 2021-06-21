@@ -1,8 +1,7 @@
-import React, { useState, Component } from 'react';
+import React, { useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native'
-import LoginPage from '../screens/LoginPage';
-import HomePage from '../screens/HomePage';
+import LoginScreen from '../screens/LoginScreen';
+import MainStack from '../routes/MainStack';
 import AuthContext from '../AuthContext';
 
 const Stack = createStackNavigator();
@@ -21,26 +20,23 @@ const AuthStack = () => {
     );
 
     return (
-        <NavigationContainer>
-            <AuthContext.Provider value={authContext}>
-                <Stack.Navigator>
-                    {userToken == null ? (
-                    // No token found, user isn't signed in
-                    <Stack.Screen
-                        name="SignIn"
-                        component={LoginPage}
-                        options={{
-                        title: 'Sign in',
+        <AuthContext.Provider value={authContext}>
+            <Stack.Navigator screenOptions={{headerShown: false}}>
+                {userToken == null ? (
+                // No token found, user isn't signed in
+                <Stack.Screen
+                    name="SignIn"
+                    component={LoginScreen}
+                    options={{
                         animationTypeForReplace: isSignout ? 'pop' : 'push',
-                        }}
-                    />
-                    ) : (
-                    // User is signed in
-                    <Stack.Screen name="Home" component={HomePage} />
-                    )}
-                </Stack.Navigator>
-            </AuthContext.Provider>
-        </NavigationContainer>
+                    }}
+                />
+                ) : (
+                // User is signed in
+                <Stack.Screen name="Main" component={MainStack} />
+                )}
+            </Stack.Navigator>
+        </AuthContext.Provider>
     );
 }
 
