@@ -6,4 +6,12 @@ Backend: Cloud Firestore
 
 ## Progress
 ### UI Screens
--[ ] Login
+- [ ] Login
+- [ ] Home: Map + Calendar
+- [ ] Profile
+- [ ] Settings
+- [ ] Matching
+### Backend logic
+- [ ] Authentication
+- [ ] Matching algorithm
+- [ ] Data storage
