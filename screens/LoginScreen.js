@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, Pressable, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -6,11 +6,12 @@ import TextBox from '../components/TextBox';
 import wallpaper from '../assets/travel-background.jpg';
 import AuthContext from '../AuthContext';
 
-const LoginScreen = () => {
-    const [username, setUsername] = React.useState('');
-    const [password, setPassword] = React.useState('');
+import FirebaseAPI from '../constants/FirebaseAPI';
 
-    const { signIn } = React.useContext(AuthContext);
+const LoginScreen = () => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const { signIn } = useContext(AuthContext);
 
     return (
         <SafeAreaView style={styles.container}>

@@ -4,12 +4,20 @@ import MapView, { PROVIDER_GOOGLE, Marker, Callout } from 'react-native-maps';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { GlobalColours } from '../constants/Colours';
+import { getAllEvents } from '../constants/FirebaseAPI';
 
 const MapScreen = () => {
     // Current user location
     const [location, setLocation] = useState(null);
-    const [ mapRegion, setRegion ] = useState( null )
+    const [ mapRegion, setRegion ] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
+    const [events, setEvents] = useState(init());
+    
+    async function init() {
+        let events = await getAllEvents("MFfPsLM7QVtUNvljS7DZ");
+        //console.log(events);
+        setEvents(events);
+    }
 
     // Use expo Location service to get current user location
     useEffect(() => {
@@ -29,7 +37,7 @@ const MapScreen = () => {
     }, []);
 
     // Sets new coordinates
-    _handleMapRegionChange = mapRegion => {
+    const _handleMapRegionChange = mapRegion => {
         setRegion(mapRegion);
     };
 
@@ -41,6 +49,35 @@ const MapScreen = () => {
             </View>);
     };
 
+    // Retrieve events from Firestore and create map markers
+    let eventComponents = events.map(({id, data}) => (
+        <Marker
+        key={id}
+        coordinate={{
+            latitude: data.Latitude,
+            longitude: data.Longitude
+        }}
+        >
+            <MaterialCommunityIcons name={'map-marker'} size={50} color={GlobalColours.primary} />
+
+            <Callout tooltip>
+                <View>
+                    <View style={styles.Bubble}>
+                        <Text style={{fontWeight:'600', fontSize:18}}>{data.Name}</Text>
+                        <Text style={{color:'#474747', marginBottom:10}}>{data.StartTime.toDateString()}</Text>
+
+                        <View style={{alignSelf:'flex-end', justifyContent:'center', flexDirection:'row'}}>
+                            <View style={{marginLeft:-60}}><Image style={styles.HeadBubble} source={require('../assets/womanstock.jpeg')}/></View>
+                            <View style={{marginLeft:-60}}><Image style={styles.HeadBubble} source={require('../assets/womanstock.jpeg')}/></View>
+                        </View>
+                    </View>
+                    <View style={styles.arrowBorder}></View>
+                    <View style={styles.arrow}></View>
+                </View>
+            </Callout>
+        </Marker>
+    ));
+
     return (
         <MapView
             provider={PROVIDER_GOOGLE}
@@ -49,62 +86,7 @@ const MapScreen = () => {
             initialRegion={mapRegion}
             onRegionChange={_handleMapRegionChange}
         >
-            <Marker
-            coordinate={{
-                latitude: -37.8119,
-                longitude: 144.93676
-            }}
-            title="Event Title"
-            >
-                <MaterialCommunityIcons name={'map-marker'} size={50} color={GlobalColours.primary} />
-
-                <Callout tooltip>
-                    <View>
-                        <View style={styles.Bubble}>
-                            <Text style={{fontWeight:'600', fontSize:18}}>Melbourne Eye</Text>
-                            <Text style={{color:'#474747', marginBottom:10}}>19 Aug 05:30pm</Text>
-
-                            <View style={{alignSelf:'flex-end', justifyContent:'center', flexDirection:'row'}}>
-                                <View style={{marginLeft:-60}}><Image style={styles.HeadBubble} source={require('../assets/womanstock.jpeg')}/></View>
-                                <View style={{marginLeft:-60}}><Image style={styles.HeadBubble} source={require('../assets/womanstock.jpeg')}/></View>
-                            </View>
-                        </View>
-                        <View style={styles.arrowBorder}></View>
-                        <View style={styles.arrow}></View>
-                    </View>
-                </Callout>
-            </Marker>
-
-
-            <Marker
-            coordinate={{
-                latitude: -37.8679,
-                longitude: 144.9740
-            }}
-            title="Event Title"
-            >
-                <MaterialCommunityIcons name={'map-marker'} size={50} color={GlobalColours.primary} />
-
-                <Callout tooltip>
-                    <View>
-                        <View style={styles.Bubble}>
-                            <Text style={{fontWeight:'600', fontSize:18, marginBottom:10}}>Skate Along St Kilda beach</Text>
-
-                            <View style={{flexDirection:'row', justifyContent:'center', alignSelf:'flex-start'}}>
-                                <Text style={{color:'#474747', marginRight:80}}>12:00pm - 03:00pm</Text>
-
-                                <View style={{alignSelf:'flex-end', justifyContent:'center', flexDirection:'row'}}>
-                                    <View style={{marginLeft:-60}}><Image style={styles.HeadBubble} source={require('../assets/womanstock.jpeg')}/></View>
-                                    <View style={{marginLeft:-60}}><Image style={styles.HeadBubble} source={require('../assets/womanstock.jpeg')}/></View>
-                                </View>
-                            </View>
-
-                        </View>
-                        <View style={styles.arrowBorder}></View>
-                        <View style={styles.arrow}></View>
-                    </View>
-                </Callout>
-            </Marker>
+           {eventComponents}
         </MapView>
     );
 }

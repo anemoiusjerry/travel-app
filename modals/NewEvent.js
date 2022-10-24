@@ -4,6 +4,9 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { GlobalColours } from "../constants/Colours";
 
 const NewEvent = props => {
+    const [name, setName] = useState();
+    const [latitude, setLatitude] = useState();
+    const [longitude, setLongitude] = useState();
     const [datetime, setDatetime] = useState(new Date())
 
     return (
@@ -18,8 +21,12 @@ const NewEvent = props => {
         >
             <View style={{flex:1, ...styles.centeredView}}>
                 <View style={styles.modalView}>
-                    <TextInput style={styles.modalText} placeholder={"Event Title"} placeholderTextColor={"#808080"} />
-                    <TextInput style={styles.modalText} placeholder={"Location"} placeholderTextColor={"#808080"} />
+                    <TextInput 
+                        style={styles.modalText} 
+                        placeholder={"Event Title"} 
+                        placeholderTextColor={GlobalColours.grey} 
+                        onChangeText={}/>
+                    <TextInput style={styles.modalText} placeholder={"Location"} placeholderTextColor={GlobalColours.grey} />
 
                     <View style={{flexDirection:'row'}}>
                         <DateTimePicker

@@ -1,11 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dimensions, Image, Text, TouchableOpacity, ScrollView, StyleSheet, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { GlobalColours } from '../constants/Colours';
 import SharedStyles from '../constants/Styles';
+import { getUser } from '../constants/FirebaseAPI';
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const ProfileScreen = () => {
+    const [userInfo, setUserInfo] = useState(init());
+    const [age, setAge] = useState();
+
+    // Retrieve user info
+    async function init() {
+        const data = await getUser("MFfPsLM7QVtUNvljS7DZ");
+        setUserInfo(data);
+
+        // Calculate age from timestamp
+        var dt = new Date().valueOf() - (data.Birthday.seconds * 1000);
+        var ageDate = new Date(dt);
+        setAge(Math.abs(ageDate.getUTCFullYear() - 1970));
+    }
+
     return (
         <ScrollView style={styles.userInfoSection}>
             {/* Images carousel */}
@@ -31,23 +46,23 @@ const ProfileScreen = () => {
             </View>
 
             <View style={styles.infoBoxWrapper}>
-                <Text style={styles.title}>Jerry Liu</Text>
-                <Text style={styles.caption}>Pellentesque nisi lorem, tincidunt quis ligula non, ultricies interdum sapien.</Text>
+                <Text style={styles.title}>{userInfo.Name}</Text>
+                <Text style={styles.caption}>{userInfo.Blurb}</Text>
             </View>
 
             {/* User information segment */}
             <View style={SharedStyles.menuWrapper}>
                 <View style={SharedStyles.menuItem}>
                     <MaterialCommunityIcons name='cake-variant' size={25} color={GlobalColours.primary} />
-                    <Text style={SharedStyles.menuItemText}>Age</Text>
+                    <Text style={SharedStyles.menuItemText}>{age}</Text>
                 </View>
                 <View style={SharedStyles.menuItem}>
                     <MaterialCommunityIcons name='gender-male-female' size={25} color={GlobalColours.primary} />
-                    <Text style={SharedStyles.menuItemText}>Gender</Text>
+                    <Text style={SharedStyles.menuItemText}>{userInfo.Gender}</Text>
                 </View>
                 <View style={SharedStyles.menuItem}>
                     <MaterialCommunityIcons name='earth' size={25} color={GlobalColours.primary} />
-                    <Text style={SharedStyles.menuItemText}>Nationality</Text>
+                    <Text style={SharedStyles.menuItemText}>{userInfo.Nationality}</Text>
                 </View>
 
                 {/* Pad bottom so that items are not hidden by tray */}
